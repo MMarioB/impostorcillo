@@ -3,19 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const categories = [
-  { value: "animales", label: "🐾 Animales" },
-  { value: "peliculas", label: "🎬 Películas" },
-  { value: "comida", label: "🍕 Comida" },
-  { value: "profesiones", label: "👷 Profesiones" },
-  { value: "lugares", label: "📍 Lugares" },
-  { value: "deportes", label: "⚽ Deportes" },
-  { value: "objetos", label: "📦 Objetos" },
-];
-
 export default function Home() {
   const router = useRouter();
-  const [category, setCategory] = useState("animales");
   const [impostorCount, setImpostorCount] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +13,7 @@ export default function Home() {
     const res = await fetch("/api/room/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category, impostorCount }),
+      body: JSON.stringify({ impostorCount }),
     });
     const data = await res.json();
     router.push(`/sala/${data.code}`);
@@ -39,23 +28,6 @@ export default function Home() {
             IMPOSTORCILLO
           </h1>
           <p className="text-[#4fffdf] mt-2 font-medium">¿Quién es el impostor?</p>
-        </div>
-
-        <div className="mb-6">
-          <label className="block mb-2 font-bold text-[#ffe66d] text-sm uppercase tracking-wide">
-            Categoría
-          </label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full p-4 rounded-2xl bg-[#0f3460] border-2 border-[#4fffdf] text-white font-medium text-lg focus:outline-none focus:border-[#ffe66d] transition-colors"
-          >
-            {categories.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div className="mb-8">
