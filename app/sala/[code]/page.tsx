@@ -3,16 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 
-const categoryOptions = [
-    { value: "animales", label: "🐾 Animales" },
-    { value: "peliculas", label: "🎬 Películas" },
-    { value: "comida", label: "🍕 Comida" },
-    { value: "profesiones", label: "👷 Profesiones" },
-    { value: "lugares", label: "📍 Lugares" },
-    { value: "deportes", label: "⚽ Deportes" },
-    { value: "objetos", label: "📦 Objetos" },
-];
-
 interface Player {
     id: string;
     name: string;
@@ -38,7 +28,6 @@ export default function SalaPage() {
     const [copied, setCopied] = useState(false);
     const [name, setName] = useState("");
     const [joining, setJoining] = useState(false);
-    const [newCategory, setNewCategory] = useState<string | null>(null);
     const [playerId, setPlayerId] = useState<string | null>(() => {
         if (typeof window !== "undefined") {
             return localStorage.getItem(`player-${code}`);
@@ -154,17 +143,13 @@ export default function SalaPage() {
         const me = playerId ? room.players.find((p) => p.id === playerId) : null;
 
         const resetGame = async () => {
-            const categoryToUse = newCategory || room.category;
             const res = await fetch(`/api/room/${code}/reset`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ category: categoryToUse }),
             });
             if (!res.ok) {
                 const data = await res.json();
                 alert(data.error);
             }
-            setNewCategory(null);
         };
 
         return (
@@ -193,26 +178,9 @@ export default function SalaPage() {
                         </>
                     )}
 
-                    <div className="mt-8 text-left">
-                        <label className="block mb-2 font-bold text-[#ffe66d] text-sm uppercase tracking-wide">
-                            Categoría siguiente
-                        </label>
-                        <select
-                            value={newCategory || room.category}
-                            onChange={(e) => setNewCategory(e.target.value)}
-                            className="w-full p-4 rounded-2xl bg-[#0f3460] border-2 border-[#4fffdf] text-white font-medium text-lg focus:outline-none focus:border-[#ffe66d] transition-colors"
-                        >
-                            {categoryOptions.map((cat) => (
-                                <option key={cat.value} value={cat.value}>
-                                    {cat.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
                     <button
                         onClick={resetGame}
-                        className="w-full mt-4 p-5 bg-[#ffe66d] hover:bg-[#ffd93d] text-[#1a1a2e] rounded-2xl font-black text-xl uppercase tracking-wide shadow-[0_6px_0_#ccb800] hover:shadow-[0_4px_0_#ccb800] hover:translate-y-[2px] transition-all"
+                        className="w-full mt-8 p-5 bg-[#ffe66d] hover:bg-[#ffd93d] text-[#1a1a2e] rounded-2xl font-black text-xl uppercase tracking-wide shadow-[0_6px_0_#ccb800] hover:shadow-[0_4px_0_#ccb800] hover:translate-y-[2px] transition-all"
                     >
                         🔄 Nueva Partida
                     </button>

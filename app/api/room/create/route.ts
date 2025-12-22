@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { generateRoomCode, Room } from "@/lib/game-logic";
 import { saveRoom, getRoom } from "@/lib/redis";
-import { Category } from "@/lib/words";
+import { getRandomCategory } from "@/lib/words";
 import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
@@ -27,8 +27,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { category, impostorCount } = body as {
-        category: Category;
+    const { impostorCount } = body as {
         impostorCount: number;
     };
 
@@ -44,6 +43,9 @@ export async function POST(request: Request) {
     while (await getRoom(code)) {
         code = generateRoomCode();
     }
+
+    // Seleccionar categoría aleatoria
+    const category = getRandomCategory();
 
     const room: Room = {
         code,

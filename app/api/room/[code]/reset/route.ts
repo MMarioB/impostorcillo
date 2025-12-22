@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { getRoom, saveRoom } from "@/lib/redis";
-import { Category } from "@/lib/words";
+import { getRandomCategory } from "@/lib/words";
 
 export async function POST(
     request: Request,
     { params }: { params: Promise<{ code: string }> }
 ) {
     const { code } = await params;
-    const body = await request.json().catch(() => ({}));
-    const { category } = body as { category?: Category };
 
     const room = await getRoom(code.toUpperCase());
 
@@ -16,11 +14,14 @@ export async function POST(
         return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
     }
 
+    // Siempre usar una categoría aleatoria
+    const category = getRandomCategory();
+
     const resetRoom = {
         ...room,
         started: false,
         word: undefined,
-        category: category || room.category,
+        category,
         players: room.players.map((p) => ({
             id: p.id,
             name: p.name,

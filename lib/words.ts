@@ -73,3 +73,8 @@ export function getRandomWord(category: Category): string {
     const words = categories[category];
     return words[Math.floor(Math.random() * words.length)];
 }
+
+export function getRandomCategory(): Category {
+    const categoryKeys = Object.keys(categories) as Category[];
+    return categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
+}
